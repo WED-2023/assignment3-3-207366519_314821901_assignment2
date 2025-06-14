@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, sameAs } from '@vuelidate/validators';
 
@@ -42,11 +42,14 @@ export default {
       confirmPassword: '',
     });
 
-    const rules = {
+    const rules = computed(() => ({
       username: { required },
       password: { required, minLength: minLength(6) },
-      confirmPassword: { required, sameAsPassword: sameAs(() => state.password) }
-    };
+      confirmPassword: {
+        required,
+        sameAsPassword: sameAs(state.password, 'Passwords must match')
+      }
+    }));
 
     const v$ = useVuelidate(rules, state);
 
