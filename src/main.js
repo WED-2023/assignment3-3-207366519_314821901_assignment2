@@ -10,6 +10,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.js';
 
 import store from './store';
 
+window.store = store;
 const router = createRouter({
   history: createWebHistory(),
   routes

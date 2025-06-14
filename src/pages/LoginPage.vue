@@ -45,15 +45,13 @@ export default {
       if (await v$.value.$validate()) {
         // קריאה לשרת
         try {
-          const response =await window.axios.post('/Login', {
+          await window.axios.post('/Login', {
             username: state.username,
             password: state.password
           });
-          console.log(response);
           window.store.login(state.username);
           window.router.push('/main');
         } catch (err) {
-          console.error('Login error:');
           window.toast("Login failed", err.response.data.message, "danger");
         }
       }
