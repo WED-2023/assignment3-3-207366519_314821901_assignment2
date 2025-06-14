@@ -23,6 +23,34 @@
           Passwords must match.
         </div>
       </div>
+      <div class="form-group">
+        <label>Email:</label>
+        <input v-model="state.email" type="email" class="form-control" />
+        <div v-if="v$.email.$error" class="text-danger">
+          Email is required.
+        </div>
+      </div>
+      <div class="form-group">
+        <label>First Name:</label>
+        <input v-model="state.firstname" type="text" class="form-control" />
+        <div v-if="v$.firstname.$error" class="text-danger">
+          First Name is required.
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Last Name:</label>
+        <input v-model="state.lastname" type="text" class="form-control" />
+        <div v-if="v$.lastname.$error" class="text-danger">
+          Last Name is required.
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Country:</label>
+        <input v-model="state.country" type="text" class="form-control" />
+        <div v-if="v$.country.$error" class="text-danger">
+          Country is required.
+        </div>
+      </div>
       <button type="submit" class="btn btn-success mt-3">Register</button>
     </form>
   </div>
@@ -31,7 +59,7 @@
 <script>
 import { reactive, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required, minLength, sameAs } from '@vuelidate/validators';
+import { required, minLength, sameAs, email } from '@vuelidate/validators';
 
 export default {
   name: "RegisterPage",
@@ -40,6 +68,10 @@ export default {
       username: '',
       password: '',
       confirmPassword: '',
+      email: '',
+      firstname: '',
+      lastname: '',
+      country: '',
     });
 
     const rules = computed(() => ({
@@ -48,7 +80,11 @@ export default {
       confirmPassword: {
         required,
         sameAsPassword: sameAs(state.password, 'Passwords must match')
-      }
+      },
+      email: { required, email },
+      firstname: { required },
+      lastname: { required },
+      country: { required },
     }));
 
     const v$ = useVuelidate(rules, state);
@@ -58,9 +94,12 @@ export default {
         try {
           await window.axios.post('/Register', {
             username: state.username,
-            password: state.password
+            password: state.password,
+            email: state.email,
+            firstname: state.firstname,
+            lastname: state.lastname,
+            country: state.country,
           });
-          window.toast("Registration Successful", "You can now login", "success");
           window.router.push('/login');
         } catch (err) {
           window.toast("Registration failed", err.response.data.message, "danger");
