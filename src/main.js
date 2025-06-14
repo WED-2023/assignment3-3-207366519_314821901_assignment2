@@ -14,12 +14,15 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 });
-
+axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.withCredentials = true;
 const app = createApp(App);
 
 app.use(router);
 app.use(VueAxios, axios);
-
+app.config.globalProperties.$http = axios;
+window.axios = axios;
+window.router = router;
 app.config.globalProperties.store = store;
 
 app.config.globalProperties.toast = function (title, content, variant = null, append = false) {

@@ -53,7 +53,7 @@ export default {
     const register = async () => {
       if (await v$.value.$validate()) {
         try {
-          await window.axios.post('/register', {
+          await window.axios.post('/Register', {
             username: state.username,
             password: state.password
           });
