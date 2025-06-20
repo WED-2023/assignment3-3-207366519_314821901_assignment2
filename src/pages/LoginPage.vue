@@ -25,6 +25,7 @@
 import { reactive } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
+import { useToast } from "vue-toastification";
 
 export default {
   name: "LoginPage",
@@ -40,6 +41,7 @@ export default {
     };
 
     const v$ = useVuelidate(rules, state);
+    const toast = useToast();
 
     const login = async () => {
       if (await v$.value.$validate()) {
@@ -52,7 +54,7 @@ export default {
           window.store.login(state.username);
           window.router.push('/main');
         } catch (err) {
-          window.toast("Login failed", err.response.data.message, "danger");
+          toast.error("Invalid Login, Please check your username and password.");
         }
       }
     };
