@@ -52,6 +52,7 @@
 </template>
 
 <script>
+
 export default {
   name: "RecipePreview",
   props: {
@@ -76,7 +77,7 @@ export default {
       this.favorited = !this.favorited;
     },
     openRecipeViewPage() {
-      // Navigate to the RecipeViewPage using the recipe id
+      localStorage.setItem('currentFullViewRecipe', JSON.stringify(this.recipe));
       this.$router.push({ name: 'recipe', params: { recipeId: this.recipe.id } });
     }
   }

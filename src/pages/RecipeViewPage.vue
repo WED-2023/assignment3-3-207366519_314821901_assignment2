@@ -37,29 +37,6 @@
 </template>
 
 <script>
-const customInstructions = [
-  {
-    name: "Default",
-    steps: [
-      {
-        number: 1,
-        step: "Preheat the oven to 350°F.",
-        equipment: [
-          {
-            id: 404784,
-            image: "oven.jpg",
-            name: "oven",
-            temperature: {
-              number: 350,
-              unit: "Fahrenheit"
-            }
-          }
-        ]
-      }
-    ]
-  }
-];
-
 export default {
   data() {
     return {
@@ -68,47 +45,67 @@ export default {
   },
 
   async created() {
-    console.log("RecipeViewPage created");
     try {
-      const id = this.$route.params.recipeId;
-      let response;
+      let passedRecipe = null;
 
+      // Try getting from localStorage
       try {
-        response = await this.axios.get(
+        const stored = localStorage.getItem('currentFullViewRecipe');
+        passedRecipe = stored ? JSON.parse(stored) : null;
+      } catch {
+        passedRecipe = null; // fallback to API
+      }
+
+      // If no recipe in localStorage, fetch from API
+      if (!passedRecipe) {
+        const id = this.$route.params.recipeId;
+        const response = await this.axios.get(
           this.$root.store.server_domain + "/recipes/searchById/" + id
         );
 
-        if (response.status !== 200) {
+        if (response.status !== 200 || !response.data) {
           this.$router.replace("/NotFound");
           return;
         }
-      } catch (error) {
-        console.log("error.response.status", error.response?.status || error);
-        this.$router.replace("/NotFound");
-        return;
-      }
-      console.log("response.data chekc if analyzedInstruction", response.data);
 
+        passedRecipe = response.data;
+      }
+
+      console.log("passedRecipe:", passedRecipe);
+
+      // Destructure data from passedRecipe
       const {
-        instructions,
+        analyzedInstructions,
         extendedIngredients,
         popularity,
         readyInMinutes,
         image,
         title
-      } = response.data;
-
-      const analyzedInstructions = customInstructions
-
-      const _instructions = analyzedInstructions.flatMap(fstep =>
+      } = passedRecipe;
+      // Safely parse analyzedInstructions:
+      // If it's an internal recipe (saved as a string), parse it.
+      // If it's already an object (external/API response), use it as-is.
+      let parsesdInstructions;
+      try {
+        parsesdInstructions =
+          typeof analyzedInstructions === "string"
+            ? JSON.parse(analyzedInstructions)
+            : analyzedInstructions;
+      } catch (e) {
+        console.warn("Failed to parse analyzedInstructions:", e);
+        parsesdInstructions = [];
+      }
+      console.log("parsedInstructions:", parsesdInstructions);
+      // Flatten steps with section names
+      const _instructions = parsesdInstructions.flatMap(fstep =>
         fstep.steps.map(step => ({
           ...step,
           step: (fstep.name ? fstep.name + ": " : "") + step.step
         }))
       );
 
+      // Assign to component data property
       this.recipe = {
-        instructions,
         _instructions,
         analyzedInstructions,
         extendedIngredients,
@@ -117,12 +114,15 @@ export default {
         image,
         title
       };
+
     } catch (error) {
       console.log("Unexpected error:", error);
+      this.$router.replace("/NotFound");
     }
   }
 };
 </script>
+
 
 <style scoped>
 /* Container with some padding and max width for readability */
