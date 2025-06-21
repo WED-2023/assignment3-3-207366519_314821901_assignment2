@@ -48,10 +48,20 @@
         </select>
       </div>
 
-      <!-- Search Button -->
+      <!-- Search Button with Spinner -->
       <div>
-        <button class="btn btn-warning rounded-pill px-4 py-2" @click="OnSubmit">
-          <i class="bi bi-search me-2"></i> Search
+        <button
+          class="btn btn-warning rounded-pill px-4 py-2 d-flex align-items-center"
+          @click="OnSubmit"
+          :disabled="state.isLoading"
+        >
+          <span v-if="!state.isLoading">
+            <i class="bi bi-search me-2"></i> Search
+          </span>
+          <span v-else class="d-flex align-items-center gap-2">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </span>
         </button>
       </div>
 
@@ -71,7 +81,7 @@ export default {
       cuisine: '',
       diet: '',
       intolerances: '',
-      recipes: []
+      isLoading: false,
     });
 
     const cuisines = [
@@ -92,6 +102,7 @@ export default {
     ];
     const toast = useToast();
     const OnSubmit = async () => {
+      state.isLoading = true;
         try {
             const response = await window.axios.get('/recipes/search', {
             params: {
@@ -108,8 +119,9 @@ export default {
           console.log(state.recipes);
         } catch (err) {
           toast.error("Invalid Search, Please check your input.");
+        } finally {
+          state.isLoading = false;
         }
-      
     };
 
     return { state, cuisines, diets, intolerances, OnSubmit };
