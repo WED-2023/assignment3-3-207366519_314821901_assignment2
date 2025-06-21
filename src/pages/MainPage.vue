@@ -2,33 +2,31 @@
   <div class="container">
     <h1 class="title">Main Page</h1>
 
-    <RecipePreviewList title="Random Recipes" class="RandomRecipes center" />
+    <RandomRecipePreviewList title="Random Recipes" class="RandomRecipes center" />
 
     <div v-if="!store.username" class="text-center mt-4">
       <router-link :to="{ name: 'login' }">
         <button class="btn btn-primary">You need to Login to view this</button>
       </router-link>
     </div>
-
-    <RecipePreviewList
+    <div v-else>
+    <LastViewedRecipesPreviewList
       title="Last Viewed Recipes"
-      :class="{
-        RandomRecipes: true,
-        blur: !store.username,
-        center: true
-      }"
-      disabled
-    />
+      class="LastViewedRecipes center"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import { getCurrentInstance } from 'vue';
-import RecipePreviewList from "../components/RandomRecipePreviewList.vue";
+import RandomRecipePreviewList from "../components/RandomRecipePreviewList.vue";
+import LastViewedRecipesPreviewList from "../components/LastViewedRecipesPreviewList.vue";
 
 export default {
   components: {
-    RecipePreviewList
+    RandomRecipePreviewList,
+    LastViewedRecipesPreviewList
   },
   setup() {
     const internalInstance = getCurrentInstance();
@@ -41,6 +39,9 @@ export default {
 
 <style lang="scss" scoped>
 .RandomRecipes {
+  margin: 10px 0 10px;
+}
+.LastViewedRecipes {
   margin: 10px 0 10px;
 }
 .blur {
