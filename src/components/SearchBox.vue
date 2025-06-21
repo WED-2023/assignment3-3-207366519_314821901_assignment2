@@ -17,7 +17,7 @@
       <!-- Cuisine Dropdown -->
       <div>
         <select class="form-select rounded-pill px-4" v-model="state.cuisine">
-          <option value="" disabled selected>Cuisine</option>
+          <option value="">Cuisine</option>
           <option v-for="option in cuisines" :key="option" :value="option">{{ option }}</option>
         </select>
       </div>
@@ -25,7 +25,7 @@
       <!-- Diet Dropdown -->
       <div>
         <select class="form-select rounded-pill px-4" v-model="state.diet">
-          <option value="" disabled selected>Diet</option>
+          <option value="">Diet</option>
           <option v-for="option in diets" :key="option" :value="option">{{ option }}</option>
         </select>
       </div>
@@ -33,7 +33,7 @@
       <!-- Intolerances Dropdown -->
       <div>
         <select class="form-select rounded-pill px-4" v-model="state.intolerances">
-          <option value="" disabled selected>Intolerances</option>
+          <option value="">Intolerances</option>
           <option v-for="option in intolerances" :key="option" :value="option">{{ option }}</option>
         </select>
       </div>
@@ -47,10 +47,20 @@
         </select>
       </div>
 
-      <!-- Search Button -->
+      <!-- Search Button with Spinner -->
       <div>
-        <button class="btn btn-warning rounded-pill px-4 py-2" @click="OnSubmit">
-          <i class="bi bi-search me-2"></i> Search
+        <button
+          class="btn btn-warning rounded-pill px-4 py-2 d-flex align-items-center"
+          @click="OnSubmit"
+          :disabled="state.isLoading"
+        >
+          <span v-if="!state.isLoading">
+            <i class="bi bi-search me-2"></i> Search
+          </span>
+          <span v-else class="d-flex align-items-center gap-2">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </span>
         </button>
       </div>
 
@@ -70,6 +80,7 @@ export default {
       cuisine: '',
       diet: '',
       intolerances: '',
+      isLoading: false,
     });
 
     const cuisines = [
@@ -90,6 +101,7 @@ export default {
     ];
     const toast = useToast();
     const OnSubmit = async () => {
+      state.isLoading = true;
         try {
             const response = await window.axios.get('/recipes/search', {
             params: {
@@ -103,8 +115,9 @@ export default {
           console.log(response.data);
         } catch (err) {
           toast.error("Invalid Search, Please check your input.");
+        } finally {
+          state.isLoading = false;
         }
-      
     };
 
     return { state, cuisines, diets, intolerances, OnSubmit };
