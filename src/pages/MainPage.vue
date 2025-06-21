@@ -24,7 +24,7 @@
 
 <script>
 import { getCurrentInstance } from 'vue';
-import RecipePreviewList from "../components/RecipePreviewList.vue";
+import RecipePreviewList from "../components/RandomRecipePreviewList.vue";
 
 export default {
   components: {

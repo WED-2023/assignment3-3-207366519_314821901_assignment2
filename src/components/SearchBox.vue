@@ -72,9 +72,10 @@
 import { reactive } from 'vue';
 import { useToast } from "vue-toastification";
 
+
 export default {
   name: 'SearchBox',
-  setup() {
+  setup(props, { emit }) {  // הוספנו את emit מהקונטקסט
     const state = reactive({
       search_input: '',
       results_amount: '5',
@@ -82,6 +83,7 @@ export default {
       diet: '',
       intolerances: '',
       isLoading: false,
+      recipes: []
     });
 
     const cuisines = [
@@ -100,6 +102,7 @@ export default {
       "Dairy", "Egg", "Gluten", "Grain", "Peanut", "Seafood", "Sesame",
       "Shellfish", "Soy", "Sulfite", "Tree Nut", "Wheat"
     ];
+
     const toast = useToast();
     const OnSubmit = async () => {
       state.isLoading = true;
@@ -116,13 +119,15 @@ export default {
           const recipes = response.data;
           state.recipes = [];
           state.recipes.push(...recipes);
-          console.log(state.recipes);
+          console.log("before Emitting recipes:", state.recipes);
+          emit('results-found', [...state.recipes]);
         } catch (err) {
           toast.error("Invalid Search, Please check your input.");
         } finally {
           state.isLoading = false;
         }
     };
+
 
     return { state, cuisines, diets, intolerances, OnSubmit };
   }
