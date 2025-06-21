@@ -17,15 +17,16 @@
       <!-- Cuisine Dropdown -->
       <div>
         <select class="form-select rounded-pill px-4" v-model="state.cuisine">
-          <option value="" disabled selected>Cuisine</option>
+          <option value="">Cuisine</option>
           <option v-for="option in cuisines" :key="option" :value="option">{{ option }}</option>
-        </select>
+        </select> 
       </div>
+
 
       <!-- Diet Dropdown -->
       <div>
         <select class="form-select rounded-pill px-4" v-model="state.diet">
-          <option value="" disabled selected>Diet</option>
+          <option value="">Diet</option>
           <option v-for="option in diets" :key="option" :value="option">{{ option }}</option>
         </select>
       </div>
@@ -33,7 +34,7 @@
       <!-- Intolerances Dropdown -->
       <div>
         <select class="form-select rounded-pill px-4" v-model="state.intolerances">
-          <option value="" disabled selected>Intolerances</option>
+          <option value="">Intolerances</option>
           <option v-for="option in intolerances" :key="option" :value="option">{{ option }}</option>
         </select>
       </div>
@@ -70,6 +71,7 @@ export default {
       cuisine: '',
       diet: '',
       intolerances: '',
+      recipes: []
     });
 
     const cuisines = [
@@ -100,7 +102,10 @@ export default {
                 intolerance: state.intolerances
             }
           });
-          console.log(response.data);
+          const recipes = response.data;
+          state.recipes = [];
+          state.recipes.push(...recipes);
+          console.log(state.recipes);
         } catch (err) {
           toast.error("Invalid Search, Please check your input.");
         }
