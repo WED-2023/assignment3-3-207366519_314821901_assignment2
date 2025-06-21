@@ -60,6 +60,7 @@
 import { reactive, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, sameAs, email } from '@vuelidate/validators';
+import { useToast } from "vue-toastification";
 
 export default {
   name: "RegisterPage",
@@ -88,7 +89,7 @@ export default {
     }));
 
     const v$ = useVuelidate(rules, state);
-
+    const toast = useToast();
     const register = async () => {
       if (await v$.value.$validate()) {
         try {
@@ -101,8 +102,9 @@ export default {
             country: state.country,
           });
           window.router.push('/login');
+          toast.success("Registration successful!");
         } catch (err) {
-          window.toast("Registration failed", err.response.data.message, "danger");
+          toast.error("Username or email already exists.");
         }
       }
     };
