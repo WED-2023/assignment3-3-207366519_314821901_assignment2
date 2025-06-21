@@ -19,8 +19,9 @@
         <select class="form-select rounded-pill px-4" v-model="state.cuisine">
           <option value="">Cuisine</option>
           <option v-for="option in cuisines" :key="option" :value="option">{{ option }}</option>
-        </select>
+        </select> 
       </div>
+
 
       <!-- Diet Dropdown -->
       <div>
@@ -71,9 +72,10 @@
 import { reactive } from 'vue';
 import { useToast } from "vue-toastification";
 
+
 export default {
   name: 'SearchBox',
-  setup() {
+  setup(props, { emit }) {  // הוספנו את emit מהקונטקסט
     const state = reactive({
       search_input: '',
       results_amount: '5',
@@ -81,6 +83,7 @@ export default {
       diet: '',
       intolerances: '',
       isLoading: false,
+      recipes: []
     });
 
     const cuisines = [
@@ -99,6 +102,7 @@ export default {
       "Dairy", "Egg", "Gluten", "Grain", "Peanut", "Seafood", "Sesame",
       "Shellfish", "Soy", "Sulfite", "Tree Nut", "Wheat"
     ];
+
     const toast = useToast();
     const OnSubmit = async () => {
       state.isLoading = true;
@@ -112,13 +116,18 @@ export default {
                 intolerance: state.intolerances
             }
           });
-          console.log(response.data);
+          const recipes = response.data;
+          state.recipes = [];
+          state.recipes.push(...recipes);
+          console.log("before Emitting recipes:", state.recipes);
+          emit('results-found', [...state.recipes]);
         } catch (err) {
           toast.error("Invalid Search, Please check your input.");
         } finally {
           state.isLoading = false;
         }
     };
+
 
     return { state, cuisines, diets, intolerances, OnSubmit };
   }
