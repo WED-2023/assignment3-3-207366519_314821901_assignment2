@@ -1,5 +1,5 @@
 <template>
-  <div class="card h-100 recipe-card shadow-sm">
+  <div class="card h-100 recipe-card shadow-sm" @click="openRecipeViewPage">
     <img
       v-if="recipe.image"
       :src="recipe.image"
@@ -67,15 +67,22 @@ export default {
     };
   },
   methods: {
-    toggleLike() {
+    toggleLike(event) {
+      event.stopPropagation(); // prevent routing on button click
       this.liked = !this.liked;
     },
-    toggleFavorite() {
+    toggleFavorite(event) {
+      event.stopPropagation(); // prevent routing on button click
       this.favorited = !this.favorited;
+    },
+    openRecipeViewPage() {
+      // Navigate to the RecipeViewPage using the recipe id
+      this.$router.push({ name: 'recipe', params: { recipeId: this.recipe.id } });
     }
   }
 };
 </script>
+
 
 <style scoped>
 .recipe-card {
