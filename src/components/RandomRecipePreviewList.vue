@@ -14,7 +14,7 @@
 import RecipePreview from "./RecipePreview.vue";
 
 export default {
-  name: "RecipePreviewList",
+  name: "RandomRecipePreviewList",
   components: {
     RecipePreview,
   },
@@ -29,24 +29,24 @@ export default {
       recipes: [],
     };
   },
-  // mounted() {
-  //   this.updateRecipes();
-  // },
-  // methods: {
-  //   async updateRecipes() {
-  //     try {
-  //       const response = await this.axios.get(
-  //         this.$root.store.server_domain + "/recipes/random"
-  //       );
-  //       const recipes = response.data;
+  mounted() {
+    this.updateRecipes();
+  },
+  methods: {
+    async updateRecipes() {
+      try {
+        const response = await this.axios.get(
+          this.$root.store.server_domain + "/recipes/randomm"
+        );
+        const recipes = response.data;
         
-  //       this.recipes = [];
-  //       this.recipes.push(...recipes);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   },
-  // },
+        this.recipes = [];
+        this.recipes.push(...recipes);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
 };
 </script>
 
