@@ -45,7 +45,9 @@ export default {
   },
 
   async created() {
+    console.log("Created hook called");
     try {
+      
       let passedRecipe = null;
 
       // Try getting from localStorage
@@ -55,7 +57,7 @@ export default {
       } catch {
         passedRecipe = null; // fallback to API
       }
-
+      console.log("passedRecipe from localStorage:", passedRecipe);
       // If no recipe in localStorage, fetch from API
       if (!passedRecipe) {
         const id = this.$route.params.recipeId;
@@ -71,7 +73,9 @@ export default {
         passedRecipe = response.data;
       }
 
-      console.log("passedRecipe:", passedRecipe);
+      const internal = Boolean(passedRecipe?.internal);
+
+
 
       // Destructure data from passedRecipe
       const {
@@ -114,12 +118,25 @@ export default {
         image,
         title
       };
-
+    if (window.store.username) {
+      console.log("entered to add to viewed recipes");
+      this.addToViewedRecipes(
+        this.$route.params.recipeId,
+        internal
+      );}
+    
     } catch (error) {
       console.log("Unexpected error:", error);
       this.$router.replace("/NotFound");
     }
-  }
+  },
+methods: {
+  async addToViewedRecipes(recipeId, internal) {
+    await this.axios.post(this.$root.store.server_domain + "/users/addToViewRecipe/", {
+      recipeId:recipeId,
+      internalRecipe:internal
+    });
+  }}
 };
 </script>
 

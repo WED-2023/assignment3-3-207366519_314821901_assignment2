@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
     <div id="nav">
       <router-link :to="{ name: 'main' }">Vue Recipes</router-link> |
       <router-link :to="{ name: 'search' }">Search</router-link> |
@@ -10,6 +11,7 @@
       </span>
       <span v-else>
         {{ store.username }}:
+        <button @click="CreateRecipe" class="btn btn-link p-0">Create Recipe</button> |
         <button @click="logout" class="btn btn-link p-0">Logout</button> |
       </span>
     </div>
@@ -32,10 +34,17 @@ export default {
     const logout = () => {
       store.logout();
       toast.success("User logged out successfully");
-      router.push("/").catch(() => {});
+      router.push("/login").catch(() => {});
+    };
+    const CreateRecipe = () => {
+      if (!store.username) {
+        toast.error("You need to log in to create a recipe.");
+        return;
+      }
+      router.push("/create-recipe").catch(() => {});
     };
 
-    return { store, logout };
+    return { store, logout, CreateRecipe };
   }
 }
 </script>
@@ -44,7 +53,7 @@ export default {
 @import "@/scss/form-style.scss";
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Quicksand', Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
