@@ -14,6 +14,7 @@
               :recipe="recipe"
               @update-popularity-increase="increasePopularity"
               @update-popularity-decrease="decreasePopularity"
+              @update-favorite="updateFavorite"
             />
         </div>
       </div>
@@ -28,47 +29,74 @@
 </template>
 
 
-
 <script>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import SearchBox from '../components/SearchBox.vue';
 import RecipePreview from '../components/RecipePreview.vue';
+
 export default {
   name: 'SearchPage',
   components: {
     SearchBox,
     RecipePreview
   },
-setup() {
-  const recipesFromChild = ref([]);
-  const hasSearched = ref(false);
 
-  const onResultsFound = (recipes) => {
-    recipesFromChild.value = [...recipes];
-    hasSearched.value = true;
-    console.log('Recipes from child:', recipesFromChild.value);
-  };
+  setup() {
+    const recipesFromChild = ref([]);
+    const hasSearched = ref(false);
 
-  const increasePopularity = (id) => {
-    const recipe = recipesFromChild.value.find(r => r.id === id);
-    if (recipe) recipe.popularity++;
-  };
+    const updateLocalStorage = () => {
+      localStorage.setItem("lastSearchResults", JSON.stringify(recipesFromChild.value));
+    };
 
-  const decreasePopularity = (id) => {
-    const recipe = recipesFromChild.value.find(r => r.id === id);
-    if (recipe && recipe.popularity > 0) recipe.popularity--;
-  };
+    const onResultsFound = (recipes) => {
+      recipesFromChild.value = [...recipes];
+      hasSearched.value = true;
+      updateLocalStorage();
+    };
 
-  return {
-    recipesFromChild,
-    onResultsFound,
-    hasSearched,
-    increasePopularity,
-    decreasePopularity
-  };
-}
+    const increasePopularity = (id) => {
+      const recipe = recipesFromChild.value.find(r => r.id === id);
+      if (recipe) {
+        recipe.popularity++;
+        updateLocalStorage();
+      }
+    };
+
+    const decreasePopularity = (id) => {
+      const recipe = recipesFromChild.value.find(r => r.id === id);
+      if (recipe && recipe.popularity > 0) {
+        recipe.popularity--;
+        updateLocalStorage();
+      }
+    };
+
+    const updateFavorite = ({ id, isFavorite }) => {
+      const recipe = recipesFromChild.value.find(r => r.id === id);
+      if (recipe) {
+        recipe.isFavoriteRecipe = isFavorite;
+        updateLocalStorage();
+      }
+    };
+
+    onMounted(() => {
+      const cached = localStorage.getItem("lastSearchResults");
+      if (cached) {
+        recipesFromChild.value = JSON.parse(cached);
+        hasSearched.value = true;
+      }
+    });
+
+    return {
+      recipesFromChild,
+      onResultsFound,
+      hasSearched,
+      increasePopularity,
+      decreasePopularity,
+      updateFavorite
+    };
+  }
 };
-
-
 </script>
+
 

@@ -13,6 +13,7 @@
         {{ store.username }}:
         <button @click="CreateRecipe" class="btn btn-link p-0">Create Recipe</button> |
         <button @click="logout" class="btn btn-link p-0">Logout</button> |
+        <button @click="favorite" class="btn btn-link p-0">Favorite</button>
       </span>
     </div>
     <router-view />
@@ -43,8 +44,11 @@ export default {
       }
       router.push("/create-recipe").catch(() => {});
     };
+    const favorite = () =>{
+      router.push("/favorite-page")
+    }
 
-    return { store, logout, CreateRecipe };
+    return { store, logout, CreateRecipe,favorite };
   }
 }
 </script>
