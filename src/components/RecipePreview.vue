@@ -1,12 +1,19 @@
 <template>
-  <div class="card h-100 recipe-card shadow-sm">
+  <div class="card h-100 recipe-card shadow-sm" @click="openRecipeViewPage">
+    
+  <div class="image-wrapper">
     <img
       v-if="recipe.image"
       :src="recipe.image"
       class="card-img-top recipe-image"
       alt="Recipe image"
     />
-
+    <i
+      v-if="recipe.isViewedRecipe"
+      class="bi bi-eye-fill eye-icon"
+      title="Viewed"
+    ></i>
+  </div>
     <div class="card-body text-center">
       <h5 class="card-title">{{ recipe.title }}</h5>
 
@@ -40,18 +47,21 @@
       </div>
 
       <div class="d-flex align-items-center">
-        <button @click="toggleLike" class="btn-icon" :title="liked ? 'Unlike' : 'Like'">
-          <i :class="liked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
-        </button>
-        <button @click="toggleFavorite" class="btn-icon" :title="favorited ? 'Unfavorite' : 'Favorite'">
-          <i :class="favorited ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+        <button
+          @click="toggleFavorite"
+          class="btn-icon"
+        >
+          <i
+            :class="favorited ? 'bi bi-star-fill' : 'bi bi-star'"
+          ></i>
         </button>
       </div>
     </div>
   </div>
 </template>
-
 <script>
+import { useToast } from "vue-toastification";
+
 export default {
   name: "RecipePreview",
   props: {
@@ -62,26 +72,59 @@ export default {
   },
   data() {
     return {
-      liked: false,
-      favorited: false
+      favorited: this.recipe.isFavoriteRecipe || false,
+      toast: null // we'll assign it on created hook
+
     };
   },
+  created() {
+    this.toast = useToast(); // initialize toast instance
+  },
   methods: {
-    toggleLike() {
-      this.liked = !this.liked;
+    async toggleFavorite(event) {
+      event.stopPropagation();
+      if (!window.store.username) {
+        this.toast.error("Log in to mark this recipe as a favorite.");
+        return;
+      }
+      const newFavoritedState = !this.favorited;
+      this.favorited = newFavoritedState;
+      try {
+        if (newFavoritedState) {
+          this.$emit('update-popularity-increase', this.recipe.id)
+          await this.axios.post(
+            this.$root.store.server_domain + "/users/favorites/",
+            { recipeId: this.recipe.id }
+          );
+        } else {
+          this.$emit('update-popularity-decrease', this.recipe.id)
+          await this.axios.delete(
+            this.$root.store.server_domain + "/users/favorites/",
+            { data: { recipeId: this.recipe.id } }
+          );
+        }
+      } catch (error) {
+        this.toast.error("Failed to update favorite status.");
+        // rollback state on error
+        this.favorited = !newFavoritedState;
+      }
     },
-    toggleFavorite() {
-      this.favorited = !this.favorited;
+    openRecipeViewPage() {
+      localStorage.setItem('currentFullViewRecipe', JSON.stringify(this.recipe));
+      this.$router.push({ name: 'recipe', params: { recipeId: this.recipe.id } });
     }
   }
 };
 </script>
+
 
 <style scoped>
 .recipe-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
 }
 
 .recipe-image {
@@ -130,4 +173,33 @@ export default {
 .btn-icon:hover {
   transform: scale(1.2);
 }
+.image-wrapper {
+  position: relative;
+}
+
+/* Hide the eye by default */
+.eye-icon {
+  position: absolute;
+  top: 8px;
+  left: 8px; /* or right: 8px; */
+  font-size: 1.4rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 60%;
+  padding: 6px;
+  z-index: 2;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* When hovered, make it bigger */
+.eye-icon:hover {
+  transform: scale(1.3);
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+
 </style>

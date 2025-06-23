@@ -27,6 +27,11 @@ const routes = [
     name: "recipe",
     component: () => import("../pages/RecipeViewPage.vue"),
   },
+    {
+    path: "/create-recipe",
+    name: "create-recipe",
+    component: () => import("../pages/CreateRecipePage.vue"),
+  },
   {
     path: "/:catchAll(.*)",
     name: "notFound",

@@ -9,7 +9,12 @@
         class="col-sm-6 col-md-4 col-lg-3 mb-4"
       >
         <div class="card h-100">
-          <RecipePreview class="recipePreview card-body" :recipe="recipe" />
+          <RecipePreview
+              class="recipePreview card-body"
+              :recipe="recipe"
+              @update-popularity-increase="increasePopularity"
+              @update-popularity-decrease="decreasePopularity"
+            />
         </div>
       </div>
     </div>
@@ -34,18 +39,36 @@ export default {
     SearchBox,
     RecipePreview
   },
-  setup() {
-    const recipesFromChild = ref([]);
-    const hasSearched = ref(false);
+setup() {
+  const recipesFromChild = ref([]);
+  const hasSearched = ref(false);
 
-    const onResultsFound = (recipes) => {
-      recipesFromChild.value = [...recipes];
-      hasSearched.value = true; // mark that search was done
-      console.log('Recipes from child:', recipesFromChild.value);
-    };
-    return { recipesFromChild, onResultsFound, hasSearched };
-  }
+  const onResultsFound = (recipes) => {
+    recipesFromChild.value = [...recipes];
+    hasSearched.value = true;
+    console.log('Recipes from child:', recipesFromChild.value);
+  };
+
+  const increasePopularity = (id) => {
+    const recipe = recipesFromChild.value.find(r => r.id === id);
+    if (recipe) recipe.popularity++;
+  };
+
+  const decreasePopularity = (id) => {
+    const recipe = recipesFromChild.value.find(r => r.id === id);
+    if (recipe && recipe.popularity > 0) recipe.popularity--;
+  };
+
+  return {
+    recipesFromChild,
+    onResultsFound,
+    hasSearched,
+    increasePopularity,
+    decreasePopularity
+  };
+}
 };
+
 
 </script>
 
