@@ -47,7 +47,7 @@
               <router-link to="/my-recipes" class="nav-link text-light ms-3">
                 <i class="bi bi-journal-text me-2"></i>My Recipes
               </router-link>
-              <button @click="CreateRecipe" class="nav-link btn btn-link text-light text-start ms-3">
+              <button @click="$emit('open-create-recipe')" class="nav-link btn btn-link text-light text-start ms-3">
                 <i class="bi bi-pencil-square me-2"></i>Create Recipe
               </button>
               <button @click="logout" class="nav-link btn btn-link text-light text-start ms-3">

@@ -31,7 +31,7 @@ const routes = [
     {
     path: "/create-recipe",
     name: "create-recipe",
-    component: () => import("../pages/CreateRecipePage.vue"),
+    component: () => import("../components/CreateRecipeModal.vue"),
   },
 
    {

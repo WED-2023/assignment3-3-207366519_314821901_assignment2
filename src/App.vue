@@ -4,24 +4,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
 
     <!-- Sidebar -->
-    <AppSidebar :isToggled="isSidebarToggled" @toggle="toggleSidebar" />
+    <AppSidebar
+      :isToggled="isSidebarToggled"
+      @toggle="toggleSidebar"
+      @open-create-recipe="openRecipeModal"
+    />
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
       <router-view />
     </div>
+
+    <!-- Create Recipe Modal -->
+    <CreateRecipeModal ref="recipeModalRef" />
   </div>
 </template>
 
 <script>
-import { getCurrentInstance, ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 import { useToast } from "vue-toastification";
 import AppSidebar from './components/Sidebar.vue';
+import CreateRecipeModal from './components/CreateRecipeModal.vue'; 
 
 export default {
   name: "App",
   components: {
-    AppSidebar
+    AppSidebar,
+    CreateRecipeModal
   },
   setup() {
     const internalInstance = getCurrentInstance();
@@ -40,18 +49,25 @@ export default {
       router.push("/login").catch(() => {});
     };
 
-    const CreateRecipe = () => {
+    const recipeModalRef = ref(null);
+
+    const openRecipeModal = () => {
       if (!store.username) {
         toast.error("You need to log in to create a recipe.");
         return;
       }
-      router.push("/create-recipe").catch(() => {});
+      recipeModalRef.value?.showModal();
     };
-    const favorite = () =>{
-      router.push("/favorite-page")
-    }
 
-    return { store, logout, CreateRecipe, isSidebarToggled, toggleSidebar,favorite };
+    return {
+      store,
+      logout,
+      favorite: () => router.push("/favorite-page"),
+      isSidebarToggled,
+      toggleSidebar,
+      openRecipeModal,
+      recipeModalRef
+    };
   }
 };
 </script>
