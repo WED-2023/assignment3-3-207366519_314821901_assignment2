@@ -104,6 +104,13 @@
                 Add Instruction Group
               </button>
             </div>
+            <div class="mb-3">
+              <label class="form-label">Recipe Image</label>
+              <input type="file" accept="image/*" @change="onFileChange" class="form-control" />
+              <div v-if="previewImage" class="mt-2">
+                <img :src="previewImage" alt="Image Preview" style="max-width: 200px; max-height: 150px;" />
+              </div>
+            </div>
           </div>
 
           <div class="modal-footer">
@@ -147,6 +154,24 @@ const vegetarian = ref(false)
 const glutenFree = ref(false)
 const extendedIngredients = ref([''])
 const analyzedInstructions = ref([{ name: '', steps: [''] }])
+const selectedFile = ref(null)
+const previewImage = ref(null)
+
+function onFileChange(event) {
+  const file = event.target.files[0]
+  if (!file) {
+    selectedFile.value = null
+    previewImage.value = null
+    return
+  }
+  if (!file.type.startsWith('image/')) {
+    toast.error('Please select a valid image file.')
+    return
+  }
+  selectedFile.value = file
+  previewImage.value = URL.createObjectURL(file)
+}
+
 
 function addIngredient() {
   const last = extendedIngredients.value.at(-1)
@@ -189,29 +214,42 @@ function removeStep(gIndex, sIndex) {
 }
 
 async function submitRecipe() {
-  const recipeData = {
-    title: title.value,
-    description: description.value,
-    readyInMinutes: readyInMinutes.value,
-    servings: servings.value,
-    vegan: vegan.value,
-    vegetarian: vegetarian.value,
-    glutenFree: glutenFree.value,
-    extendedIngredients: extendedIngredients.value
-      .filter(i => i.trim() !== '')
-      .map(str => ({ original: str })),
-    analyzedInstructions: analyzedInstructions.value.map(group => ({
-      name: group.name,
-      steps: group.steps.filter(s => s.trim() !== '').map((step, i) => ({
-        number: i + 1,
-        step: step
-      }))
-    })),
-    popularity: 0,
-    image: "https://spoonacular.com/recipeImages/placeholder.png"
-  }
-
   try {
+    let imageUrl = "https://spoonacular.com/recipeImages/placeholder.png"
+
+    // If user selected an image, upload it first
+    if (selectedFile.value) {
+      const formData = new FormData()
+      formData.append('image', selectedFile.value)
+
+      const uploadResponse = await axios.post('/users/upload-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      imageUrl = uploadResponse.data.url // your backend should respond with { url: '...' }
+    }
+
+    const recipeData = {
+      title: title.value,
+      description: description.value,
+      readyInMinutes: readyInMinutes.value,
+      servings: servings.value,
+      vegan: vegan.value,
+      vegetarian: vegetarian.value,
+      glutenFree: glutenFree.value,
+      extendedIngredients: extendedIngredients.value
+        .filter(i => i.trim() !== '')
+        .map(str => ({ original: str })),
+      analyzedInstructions: analyzedInstructions.value.map(group => ({
+        name: group.name,
+        steps: group.steps.filter(s => s.trim() !== '').map((step, i) => ({
+          number: i + 1,
+          step: step
+        }))
+      })),
+      popularity: 0,
+      image: imageUrl,
+    }
+
     await axios.post("/users/RecipeDB", recipeData)
 
     // Close modal
@@ -224,10 +262,19 @@ async function submitRecipe() {
     toast.error('Error submitting recipe.')
   }
 }
+
 </script>
 
 <style scoped>
 .modal-dialog {
   max-width: 800px;
+  overflow-y: auto;
+}
+.modal-content {
+  overflow-y: auto;
+}
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
 }
 </style>
