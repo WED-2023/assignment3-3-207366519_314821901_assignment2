@@ -47,8 +47,11 @@ export default {
       }
       router.push("/create-recipe").catch(() => {});
     };
+    const favorite = () =>{
+      router.push("/favorite-page")
+    }
 
-    return { store, logout, CreateRecipe, isSidebarToggled, toggleSidebar };
+    return { store, logout, CreateRecipe, isSidebarToggled, toggleSidebar,favorite };
   }
 };
 </script>

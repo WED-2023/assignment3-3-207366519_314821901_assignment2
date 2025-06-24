@@ -92,12 +92,14 @@ export default {
       try {
         if (newFavoritedState) {
           this.$emit('update-popularity-increase', this.recipe.id)
+          this.$emit("update-favorite", { id: this.recipe.id, isFavorite: true });
           await this.axios.post(
             this.$root.store.server_domain + "/users/favorites/",
             { recipeId: this.recipe.id }
           );
         } else {
           this.$emit('update-popularity-decrease', this.recipe.id)
+          this.$emit("update-favorite", { id: this.recipe.id, isFavorite: false });
           await this.axios.delete(
             this.$root.store.server_domain + "/users/favorites/",
             { data: { recipeId: this.recipe.id } }
