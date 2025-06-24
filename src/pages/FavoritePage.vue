@@ -1,27 +1,13 @@
 <template>
   <div class="container">
-    <h1 class="title">Main Page</h1>
+    <h1 class="title">Favorite Recipes</h1>
     <RecipePreviewList
-      title="Random Recipes"
-      endpoint="/recipes/random"
-    />
-
-    <div v-if="!store.username" class="text-center mt-4">
-      <router-link :to="{ name: 'login' }">
-        <button class="btn btn-primary">You need to Login to view this</button>
-      </router-link>
-    </div>
-    <div v-else>
-    <RecipePreviewList
-      title="Last Viewed Recipes"
-      endpoint="/users/getLastViewedRecipes"
+      endpoint="/users/favorites"
       :withCredentials="true"
-    />
-    </div>
-  </div>
+    /> </div>
 </template>
 
-<script>
+ <script>
 import { getCurrentInstance } from 'vue';
 import RecipePreviewList from "../components/RecipePreviewList.vue";
 

@@ -2,6 +2,7 @@ import Main from "../pages/MainPage.vue";
 import NotFound from "../pages/NotFoundPage.vue";
 
 const routes = [
+  
   {
     path: "/",
     name: "main",
@@ -27,11 +28,25 @@ const routes = [
     name: "recipe",
     component: () => import("../pages/RecipeViewPage.vue"),
   },
+    {
+    path: "/create-recipe",
+    name: "create-recipe",
+    component: () => import("../pages/CreateRecipePage.vue"),
+  },
+
+   {
+    path: "/favorite-page",
+    name: "favorite-page",
+    component: () => import("../pages/FavoritePage.vue"),
+  },
+
+
   {
     path: "/:catchAll(.*)",
     name: "notFound",
     component: NotFound,
   }
+  
 ];
 
 export default routes;
