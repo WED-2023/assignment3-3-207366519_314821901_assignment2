@@ -24,7 +24,7 @@
     v-model="state.password" 
     type="password" 
     class="form-control" 
-    @blur="v$.password.$touch()" 
+    @input="v$.password.$touch()" 
   />
       <div v-if="v$.password.$error" class="text-danger">
         <div v-if="v$.password.required.$invalid">Password is required.</div>
