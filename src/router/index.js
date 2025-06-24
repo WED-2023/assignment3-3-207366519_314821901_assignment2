@@ -39,7 +39,11 @@ const routes = [
     name: "favorite-page",
     component: () => import("../pages/FavoritePage.vue"),
   },
-
+  {
+    path: "/my-recipes",
+    name: "my-recipes",
+    component: () => import("../pages/MyRecipesPage.vue"),
+  },
 
   {
     path: "/:catchAll(.*)",

@@ -41,7 +41,7 @@
           </button>
           <transition name="slide">
             <div v-if="showAccountMenu" class="ms-3">
-              <router-link to="/favorites" class="nav-link text-light ms-3">
+              <router-link to="/favorite-page" class="nav-link text-light ms-3">
                 <i class="bi bi-heart-fill me-2"></i>Favorites
               </router-link>
               <router-link to="/my-recipes" class="nav-link text-light ms-3">
