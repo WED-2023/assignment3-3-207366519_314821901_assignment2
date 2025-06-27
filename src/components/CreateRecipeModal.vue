@@ -105,8 +105,8 @@
               </button>
             </div>
             <div class="mb-3">
-              <label class="form-label">Recipe Image</label>
-              <input type="file" accept="image/*" @change="onFileChange" class="form-control" />
+              <label class="form-label">Image URL</label>
+              <input v-model="imageUrl" class="form-control" placeholder="Enter image URL" @input="onImageUrlChange" />
               <div v-if="previewImage" class="mt-2">
                 <img :src="previewImage" alt="Image Preview" style="max-width: 200px; max-height: 150px;" />
               </div>
@@ -154,22 +154,16 @@ const vegetarian = ref(false)
 const glutenFree = ref(false)
 const extendedIngredients = ref([''])
 const analyzedInstructions = ref([{ name: '', steps: [''] }])
-const selectedFile = ref(null)
+const imageUrl = ref('')
 const previewImage = ref(null)
 
-function onFileChange(event) {
-  const file = event.target.files[0]
-  if (!file) {
-    selectedFile.value = null
+function onImageUrlChange() {
+  // Basic validation (optional, improve as needed)
+  if (imageUrl.value.trim().startsWith('http')) {
+    previewImage.value = imageUrl.value.trim()
+  } else {
     previewImage.value = null
-    return
   }
-  if (!file.type.startsWith('image/')) {
-    toast.error('Please select a valid image file.')
-    return
-  }
-  selectedFile.value = file
-  previewImage.value = URL.createObjectURL(file)
 }
 
 
@@ -215,19 +209,7 @@ function removeStep(gIndex, sIndex) {
 
 async function submitRecipe() {
   try {
-    let imageUrl = "https://spoonacular.com/recipeImages/placeholder.png"
-
-    // If user selected an image, upload it first
-    if (selectedFile.value) {
-      const formData = new FormData()
-      formData.append('image', selectedFile.value)
-
-      const uploadResponse = await axios.post('/users/upload-image', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
-      imageUrl = uploadResponse.data.url // your backend should respond with { url: '...' }
-    }
-
+    const image = imageUrl.value.trim() || "https://spoonacular.com/recipeImages/placeholder.png";
     const recipeData = {
       title: title.value,
       description: description.value,
@@ -247,7 +229,7 @@ async function submitRecipe() {
         }))
       })),
       popularity: 0,
-      image: imageUrl,
+      image: image,
     }
 
     await axios.post("/users/RecipeDB", recipeData)
