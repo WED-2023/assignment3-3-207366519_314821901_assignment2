@@ -89,6 +89,16 @@ export default {
       isLoading: false,
       recipes: []
     });
+    const savedInput = localStorage.getItem("lastSearchInput");
+if (savedInput) {
+  const parsed = JSON.parse(savedInput);
+  state.search_input = parsed.search_input || '';
+  state.results_amount = parsed.results_amount || '5';
+  state.cuisine = parsed.cuisine || '';
+  state.diet = parsed.diet || '';
+  state.intolerances = parsed.intolerances || '';
+}
+
     watch(() => state.isLoading, (val) => {
       emit('loading-status', val)
     })
@@ -127,11 +137,19 @@ export default {
           state.recipes.push(...recipes);
           console.log("before Emitting recipes:", state.recipes);
           emit('results-found', [...state.recipes]);
+          localStorage.setItem("lastSearchInput", JSON.stringify({
+          search_input: state.search_input,
+          results_amount: state.results_amount,
+          cuisine: state.cuisine,
+          diet: state.diet,
+          intolerances: state.intolerances
+        }));
         } catch (err) {
           toast.error("Invalid Search, Please check your input.");
         } finally {
           state.isLoading = false;
         }
+        
     };
 
 

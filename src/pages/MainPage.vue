@@ -6,18 +6,23 @@
       endpoint="/recipes/random"
     />
 
-    <div v-if="!store.username" class="text-center mt-4">
-      <router-link :to="{ name: 'login' }">
-        <button class="btn btn-primary">You need to Login to view this</button>
-      </router-link>
-    </div>
-    <div v-else>
-    <RecipePreviewList
-      title="Last Viewed Recipes"
-      endpoint="/users/getLastViewedRecipes"
-      :withCredentials="true"
-    />
-    </div>
+<div>
+        <h3 class="mb-0">Last Viewed Recipes</h3>
+
+        <div v-if="!store.username" class="text-center mt-3">
+          <router-link :to="{ name: 'login' }">
+            <button class="btn btn-primary">You need to Login to view this</button>
+          </router-link>
+        </div>
+
+        <div v-else>
+          <RecipePreviewList
+            endpoint="/users/getLastViewedRecipes"
+            :withCredentials="true"
+          />
+        </div>
+      </div>
+
   </div>
 </template>
 
@@ -39,6 +44,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+h1.title {
+  text-align: center;
+}
 .RandomRecipes {
   margin: 10px 0 10px;
 }

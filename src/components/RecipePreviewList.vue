@@ -64,12 +64,17 @@ export default {
           this.withCredentials ? { withCredentials: true } : undefined
         );
         this.recipes = [...response.data];
+        if (this.recipes.length === 0) {
+          this.$emit("recipes-empty");
+        }
 
         if (this.endpoint === "/recipes/random") {
           localStorage.setItem(RANDOM_STORAGE_KEY, JSON.stringify(this.recipes));
         }
       } catch (error) {
         console.log("Error getting recipes", error);
+          this.recipes = [];
+          this.$emit("recipes-empty");
       }
     },
     async refreshRandomRecipes() {

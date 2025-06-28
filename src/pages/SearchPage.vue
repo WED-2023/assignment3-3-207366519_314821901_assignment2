@@ -115,7 +115,11 @@ export default {
   }
 };
 </script>
-
+<style scoped>
+h1.title {
+  text-align: center;
+}
+</style>
 <style scoped>
 .search-illustration-loading {
   margin-top: 100px;

@@ -11,22 +11,24 @@ const store = reactive({
   },
 
 logout() {
-  console.log("logout");
-
-  // 1. Call the backend to clear the session
   window.axios.post('/Logout', {}, { withCredentials: true })
     .then(response => {
       console.log("Logged out:", response.data);
 
-      // 2. Clear frontend state
+      // Clear session-related data
       localStorage.removeItem('username');
+      localStorage.removeItem('lastSearchResults'); 
+      localStorage.removeItem('lastSearchInput');
       this.username = undefined;
 
+      this.$router.push('/login').catch(() => {});
     })
     .catch(error => {
       console.error("Logout failed:", error);
     });
 }
+
+
   
 });
 

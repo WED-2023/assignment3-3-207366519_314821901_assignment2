@@ -11,6 +11,25 @@
             <div class="mb-3">
               <div>Ready in {{ recipe.readyInMinutes }} minutes</div>
               <div>Likes: {{ recipe.popularity }} likes</div>
+              <div>Servings: {{ recipe.servings }} servings</div>
+              <div class="d-flex align-items-center">
+                <i
+                  v-if="recipe.vegan"
+                  class="bi bi-leaf icon-vegan"
+                  title="Vegan"
+                ></i>
+                <i
+                  v-if="recipe.vegetarian"
+                  class="bi bi-egg-fried icon-vegetarian"
+                  title="Vegetarian"
+                ></i>
+                <i
+                  class="bi bi-flower1 icon-glutenfree"
+                  :title="recipe.glutenFree ? 'Gluten-Free' : 'Contains Gluten'"
+                  :style="{ color: recipe.glutenFree ? '#4caf50' : '#ff5252' }"
+                ></i>
+              </div>
+
             </div>
             <strong>Ingredients:</strong>
             <ul>
@@ -84,7 +103,11 @@ export default {
         popularity,
         readyInMinutes,
         image,
-        title
+        title,
+        servings,
+        vegan,
+        vegetarian,
+        glutenFree
       } = passedRecipe;
       // Safely parse analyzedInstructions:
       // If it's an internal recipe (saved as a string), parse it.
@@ -116,7 +139,11 @@ export default {
         popularity,
         readyInMinutes,
         image,
-        title
+        title,
+        servings,
+        vegan,
+        vegetarian,
+        glutenFree
       };
     if (window.store.username) {
       console.log("entered to add to viewed recipes");
@@ -142,6 +169,23 @@ methods: {
 
 
 <style scoped>
+.icon-vegan,
+.icon-vegetarian,
+.icon-glutenfree {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.icon-vegan {
+  color: #28a745;
+}
+.icon-vegetarian {
+  color: #ff9800;
+}
+.icon-glutenfree {
+  color: #ff5252;
+}
+
 /* Container with some padding and max width for readability */
 .container {
   max-width: 900px;
