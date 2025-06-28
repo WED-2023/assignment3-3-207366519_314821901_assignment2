@@ -1,65 +1,90 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link :to="{ name: 'main' }">Vue Recipes</router-link> |
-      <router-link :to="{ name: 'search' }">Search</router-link> |
-      <span v-if="!store.username">
-        Guest:
-        <router-link :to="{ name: 'register' }">Register</router-link> |
-        <router-link :to="{ name: 'login' }">Login</router-link> |
-      </span>
-      <span v-else>
-        {{ store.username }}:
-        <button @click="logout" class="btn btn-link p-0">Logout</button> |
-      </span>
+  <div id="app" :class="{ toggled: isSidebarToggled }">
+    <!-- Font import -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+
+    <!-- Sidebar -->
+    <AppSidebar
+      :isToggled="isSidebarToggled"
+      @toggle="toggleSidebar"
+      @open-create-recipe="openRecipeModal"
+    />
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+      <router-view />
     </div>
-    <router-view />
+
+    <!-- Create Recipe Modal -->
+    <CreateRecipeModal ref="recipeModalRef" />
   </div>
 </template>
 
 <script>
-import { getCurrentInstance } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
+import { useToast } from "vue-toastification";
+import AppSidebar from './components/Sidebar.vue';
+import CreateRecipeModal from './components/CreateRecipeModal.vue'; 
 
 export default {
   name: "App",
+  components: {
+    AppSidebar,
+    CreateRecipeModal
+  },
   setup() {
     const internalInstance = getCurrentInstance();
     const store = internalInstance.appContext.config.globalProperties.store;
-    const toast = internalInstance.appContext.config.globalProperties.toast;
     const router = internalInstance.appContext.config.globalProperties.$router;
+    const toast = useToast();
+
+    const isSidebarToggled = ref(false);
+    const toggleSidebar = () => {
+      isSidebarToggled.value = !isSidebarToggled.value;
+    };
 
     const logout = () => {
       store.logout();
-      toast("Logout", "User logged out successfully", "success");
-      router.push("/").catch(() => {});
+      toast.success("User logged out successfully");
+      router.push("/login").catch(() => {});
     };
 
-    return { store, logout };
+    const recipeModalRef = ref(null);
+
+    const openRecipeModal = () => {
+      if (!store.username) {
+        toast.error("You need to log in to create a recipe.");
+        return;
+      }
+      recipeModalRef.value?.showModal();
+    };
+
+    return {
+      store,
+      logout,
+      favorite: () => router.push("/favorite-page"),
+      isSidebarToggled,
+      toggleSidebar,
+      openRecipeModal,
+      recipeModalRef
+    };
   }
-}
+};
 </script>
 
-<style lang="scss">
-@import "@/scss/form-style.scss";
-
+<style scoped>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  display: flex;
+  font-family: 'Quicksand', Avenir, Helvetica, Arial, sans-serif;
   min-height: 100vh;
+  transition: all 0.3s ease;
 }
-
-#nav {
-  padding: 30px;
+#app.toggled #sidebar-wrapper {
+  margin-left: -220px;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+#page-content-wrapper {
+  flex: 1;
+  padding: 20px;
+  transition: all 0.3s ease;
 }
 </style>
