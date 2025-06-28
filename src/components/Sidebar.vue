@@ -62,9 +62,13 @@
       </ul>
       
       <div class="mt-auto pt-3">
+          <router-link to ="/family-recipes" class="nav-link text-light">
+          <i class="bi bi-people-fill me-2"></i>Family Recipes
+        </router-link>
         <router-link to="/about" class="nav-link text-light">
           <i class="bi bi-info-circle me-2"></i>About Us
         </router-link>
+
       </div>
 
     </nav>
