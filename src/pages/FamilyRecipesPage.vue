@@ -12,7 +12,7 @@
       >
         <h2>{{ recipe.title }}</h2>
         <img
-          :src="getImage()"
+          :src="getImage(recipe)"
           alt="Recipe Image"
           class="recipe-image"
         />
@@ -58,7 +58,7 @@ export default {
   },
   async created() {
     try {
-      const response = await this.axios.get(this.$root.store.server_domain + "/familyrecipes");
+      const response = await this.axios.get(this.$root.store.server_domain + "/recipes/familyrecipes");
       if (response.status === 200) {
         this.recipes = response.data;
       } else {
@@ -85,10 +85,18 @@ export default {
         return [];
       }
     },
-    getImage() {
-      // You can change this logic per recipe if needed.
-      // Assuming all family recipes should use a static image
-      return "/BeansGrandmother.jpg";
+    getImage(recipe) {
+      // Choose image based on title or id
+      if (recipe.title.toLowerCase().includes("beans")) {
+        return "/BeansGrandmother.jpg";
+      }
+      if (recipe.title.toLowerCase().includes("bread")) {
+        return "/BreadAndEgg.jpg";
+      }
+      if (recipe.title.toLowerCase().includes("peppers")) {
+        return "/PeppersAndMeat.jpeg";
+      }
+      return "/default.jpg"; // fallback image
     }
   }
 };
