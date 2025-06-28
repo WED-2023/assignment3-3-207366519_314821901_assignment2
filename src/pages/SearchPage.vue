@@ -98,5 +98,9 @@ export default {
   }
 };
 </script>
-
+<style scoped>
+h1.title {
+  text-align: center;
+}
+</style>
 

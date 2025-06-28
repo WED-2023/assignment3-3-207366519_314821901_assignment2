@@ -19,8 +19,8 @@
         <div class="d-flex justify-content-between align-items-center mt-3">
           <button type="submit" class="btn btn-primary">Login</button>
           <div>
-            <span>Don't have an account? </span>
-            <button type="button" class="btn btn-primary" @click="register">Register</button>
+          Don't have an account?
+          <button type="button" class="btn btn-primary" @click="register">Register</button>
           </div>
         </div>
 
@@ -61,7 +61,7 @@ export default {
             password: state.password
           });
           window.store.login(state.username);
-          window.router.push('/main');
+          window.router.push('/');
         } catch (err) {
           toast.error("Invalid Login, Please check your username and password.");
         }

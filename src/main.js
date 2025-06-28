@@ -31,16 +31,8 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 });
-router.beforeEach((to, from, next) => {
-  const pagesToKeep = ['search', 'recipe'];
-  if (
-    (pagesToKeep.includes(from.name)) && 
-    !pagesToKeep.includes(to.name)
-  ) {
-    localStorage.removeItem('lastSearchResults');
-  }
-  next();
-});
+
+
 
 
 axios.defaults.baseURL = "http://localhost:3000";

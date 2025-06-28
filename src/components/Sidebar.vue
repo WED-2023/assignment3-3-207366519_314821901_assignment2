@@ -7,8 +7,12 @@
 
     <nav class="sidebar bg-dark text-light vh-100 position-fixed p-3">
       <div class="sidebar-brand mb-4 text-center">
-        <router-link to="/" class="text-decoration-none text-light h5">Lior&Asaf</router-link>
+        <router-link to="/" class="text-decoration-none text-light h5">
+        Lior&Asaf</router-link>
       </div>
+            <span class="nav-link disabled text-secondary">
+        Hello {{ store.username ? store.username : 'guest' }} !
+      </span>
       <ul class="nav flex-column">
         <li class="nav-item">
           <router-link to="/search" class="nav-link text-light">
@@ -16,14 +20,13 @@
           </router-link>
         </li>
         <li class="nav-item" v-if="!store.username">
-          <span class="nav-link disabled text-secondary">Hello guest !</span>
-          <router-link to="/register" class="nav-link text-light ms-3">
+          <router-link to="/register" class="nav-link text-light">
             <i class="bi bi-person-plus me-2"></i>Register
           </router-link>
-          <router-link to="/login" class="nav-link text-light ms-3">
+          <router-link to="/login" class="nav-link text-light">
             <i class="bi bi-box-arrow-in-right me-2"></i>Login
           </router-link>
-          <router-link to="/" class="nav-link text-light ms-3">
+          <router-link to="/" class="nav-link text-light">
             <i class="bi bi-house-door me-2"></i>Main
           </router-link>
         </li>
@@ -57,6 +60,13 @@
           </transition>
         </li>
       </ul>
+      
+      <div class="mt-auto pt-3">
+        <router-link to="/about" class="nav-link text-light">
+          <i class="bi bi-info-circle me-2"></i>About Us
+        </router-link>
+      </div>
+
     </nav>
   </div>
 </template>
@@ -107,6 +117,8 @@ export default {
 }
 .sidebar {
   width: 220px;
+    display: flex;
+  flex-direction: column;
 }
 .hamburger {
   position: fixed;
