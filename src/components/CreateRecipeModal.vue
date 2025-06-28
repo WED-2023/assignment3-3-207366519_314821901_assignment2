@@ -105,16 +105,38 @@
               </button>
             </div>
             <div class="mb-3">
-              <label class="form-label">Image URL</label>
-              <input v-model="imageUrl" class="form-control" placeholder="Enter image URL" @input="onImageUrlChange" />
+              <div class="d-flex align-items-center mb-1">
+                <label class="form-label me-2">Image URL</label>
+                <!-- Info icon with popover -->
+                <button 
+                type="button"
+                class="btn btn-link p-0 m-0"
+                data-bs-toggle="popover"
+                title="Image URL Sources"
+                style="font-size: 1rem;"
+                >
+                  <i class="bi bi-info-circle"></i>
+                </button>
+              </div>
+
+              <input 
+                v-model="imageUrl"
+                class="form-control"
+                placeholder="Enter image URL"
+                @input="onImageUrlChange"
+              />
+
               <div v-if="previewImage" class="mt-2">
-                <img :src="previewImage" alt="Image Preview" style="max-width: 200px; max-height: 150px;" />
+                <img 
+                  :src="previewImage"
+                  alt="Image Preview"
+                  style="max-width: 200px; max-height: 150px;"
+                />
               </div>
             </div>
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-success w-100">Submit Recipe</button>
           </div>
         </form>
@@ -124,10 +146,10 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from 'vue'
+import { ref, defineExpose, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import axios from 'axios'
-import { Modal } from 'bootstrap'
+import { Modal,Popover } from 'bootstrap'
 // Toast
 const toast = useToast()
 
@@ -156,6 +178,30 @@ const extendedIngredients = ref([''])
 const analyzedInstructions = ref([{ name: '', steps: [''] }])
 const imageUrl = ref('')
 const previewImage = ref(null)
+const popoverContent = ref(`
+  <div style='max-width: 300px;'>
+    <strong>Pexels:</strong><br>
+    <a href='https://www.pexels.com' target='_blank'>https://www.pexels.com</a><br>
+    1. Click a photo.<br>
+    2. Right-click → "Copy Image Address".<br>
+    <strong>Pixabay:</strong><br>
+    <a href='https://www.pixabay.com' target='_blank'>https://www.pixabay.com</a><br>
+    1. Open image in full resolution.<br>
+    2. Right-click → "Copy Image Address".<br>
+  </div>
+`)
+
+onMounted(() => {
+  const el = document.querySelector('[data-bs-toggle="popover"]')
+  if (el) {
+    new Popover(el, {
+      html: true,
+      content: popoverContent.value,
+      trigger: 'focus',
+      placement: 'right',
+    })
+  }
+})
 
 function onImageUrlChange() {
   // Basic validation (optional, improve as needed)

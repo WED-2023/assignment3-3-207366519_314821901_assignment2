@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1 class="title">Search Page</h1>
-    <SearchBox @results-found="onResultsFound" />
+    <SearchBox @results-found="onResultsFound" @loading-status="onLoadingStatus" />
     <div v-if="recipesFromChild.length > 0" class="row">
       <div
         v-for="recipe in recipesFromChild"
@@ -25,6 +25,15 @@
       <h5>No recipes found</h5>
       <p class="text-muted">Try searching with different ingredients or keywords.</p>
     </div>
+    <div v-if="!hasSearched && !isLoading" class="text-center my-5">
+      <img :src="searchPageLogo" alt="Search" style="max-width: 250px;  margin-top: 100px;" />
+      <h5 class="mt-3">Start by searching for a recipe!</h5>
+    </div>
+
+    <div v-else-if="isLoading" class="text-center my-5">
+      <img :src="searchPageLogo" alt="Loading" class="search-illustration-loading" />
+      <h5 class="mt-3">Looking for delicious recipes...</h5>
+    </div>
     </div>
 </template>
 
@@ -33,6 +42,8 @@
 import { onMounted, ref } from 'vue';
 import SearchBox from '../components/SearchBox.vue';
 import RecipePreview from '../components/RecipePreview.vue';
+import searchPageLogo from '../assets/searchPageLogo.jpg'
+
 
 export default {
   name: 'SearchPage',
@@ -44,7 +55,10 @@ export default {
   setup() {
     const recipesFromChild = ref([]);
     const hasSearched = ref(false);
-
+    const isLoading = ref(false)
+    const onLoadingStatus = (status) => {
+      isLoading.value = status
+    }
     const updateLocalStorage = () => {
       localStorage.setItem("lastSearchResults", JSON.stringify(recipesFromChild.value));
     };
@@ -93,10 +107,32 @@ export default {
       hasSearched,
       increasePopularity,
       decreasePopularity,
-      updateFavorite
+      updateFavorite,
+      isLoading,
+      onLoadingStatus,
+      searchPageLogo
     };
   }
 };
 </script>
 
+<style scoped>
+.search-illustration-loading {
+  margin-top: 100px;
+  max-width: 200px;
+  height: auto;
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+</style>
 
