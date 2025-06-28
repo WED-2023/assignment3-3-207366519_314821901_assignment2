@@ -71,6 +71,10 @@
 <script>
 import { reactive } from 'vue';
 import { useToast } from "vue-toastification";
+import { watch } from 'vue'
+
+// ... inside setup
+
 
 
 export default {
@@ -95,7 +99,9 @@ if (savedInput) {
   state.intolerances = parsed.intolerances || '';
 }
 
-
+    watch(() => state.isLoading, (val) => {
+      emit('loading-status', val)
+    })
     const cuisines = [
       "African", "Asian", "American", "British", "Cajun", "Caribbean", "Chinese",
       "Eastern European", "European", "French", "German", "Greek", "Indian", "Irish",
