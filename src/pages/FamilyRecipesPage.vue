@@ -21,6 +21,11 @@
               <span>🍽 {{ currentRecipe.servings }} servings</span>
             </div>
 
+            <!-- Recipe summary -->
+            <div class="recipe-summary mb-3">
+              <p>{{ currentRecipe.summary }}</p>
+            </div>
+
             <div class="card-footer d-flex justify-content-between align-items-center icon-footer mt-3">
               <div class="d-flex align-items-center">
                 <i
@@ -40,7 +45,6 @@
                 ></i>
               </div>
             </div>
-
 
             <strong>Ingredients:</strong>
             <ul class="ingredients">
@@ -63,8 +67,6 @@
     </div>
   </div>
 </template>
-
-
 
 <script>
 export default {
@@ -122,11 +124,11 @@ export default {
       if (title.includes("beans")) return "/BeansGrandmother.jpg";
       if (title.includes("bread")) return "/BreadAndEgg.jpg";
       if (title.includes("peppers")) return "/PeppersAndMeat.jpeg";
+      if (title.includes("oshpelo")) return "/Oshpelo.jpeg";
       return "/default.jpg";
     }
   }
 };
-
 </script>
 
 <style scoped>
@@ -194,7 +196,6 @@ export default {
   padding: 10px; /* optional: space around image inside container */
 }
 
-
 .recipe-title {
   margin-bottom: 0.5rem;
   color: #2c3e50;
@@ -206,6 +207,13 @@ export default {
   display: flex;
   justify-content: space-between;
   color: #777;
+}
+
+.recipe-summary p {
+  font-size: 1rem;
+  color: #555;
+  margin: 0.5rem 0 1rem;
+  line-height: 1.5;
 }
 
 .icon-vegan,
@@ -231,7 +239,6 @@ export default {
   margin-top: auto;
 }
 
-
 .ingredients,
 .instructions {
   margin: 0.5rem 0 1rem;
@@ -247,6 +254,4 @@ export default {
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
-
-
 </style>
